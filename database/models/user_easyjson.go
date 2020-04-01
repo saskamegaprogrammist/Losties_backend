@@ -44,7 +44,7 @@ func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendDatabaseMo
 			out.Email = string(in.String())
 		case "nickname":
 			out.Nickname = string(in.String())
-		case "fullname":
+		case "phone":
 			out.Phone = string(in.String())
 		default:
 			in.SkipRecursive()
@@ -86,7 +86,7 @@ func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendDatabaseMo
 		out.String(string(in.Nickname))
 	}
 	{
-		const prefix string = ",\"fullname\":"
+		const prefix string = ",\"phone\":"
 		out.RawString(prefix)
 		out.String(string(in.Phone))
 	}

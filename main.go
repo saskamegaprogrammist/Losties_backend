@@ -5,44 +5,33 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx"
 	"github.com/saskamegaprogrammist/Losties_backend/database"
-	"os"
+	losties_handlers "github.com/saskamegaprogrammist/Losties_backend/handlers"
+	"github.com/saskamegaprogrammist/Losties_backend/utils"
 	"time"
 
 	"github.com/google/logger"
 	"net/http"
 )
 
-const logPath  = "log.log"
-const verbose = true
 
-func loggerSetup() {
-	lf, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0660)
-	if err != nil {
-		logger.Fatalf("Failed to open log file: %v", err)
-	}
-	defer lf.Close()
-	defer logger.Init("LoggerExample", verbose, true, lf).Close()
-}
 
 func main() {
-
-	loggerSetup()
+	utils.LoggerSetup()
+	defer utils.Close()
 
 	err := database.Init(pgx.ConnConfig{
+		Database: "losties",
 		Host:     "localhost",
 		User:     "alexis",
 		Password: "sinope27",
 	},
 	)
 	if err != nil {
-		logger.Errorf("Failed to create db: %v", err)
+		utils.WriteError(false, "Failed to create db", err)
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/signup", func(writer http.ResponseWriter, request *http.Request) {
-		writer.Header().Set("Content-Type", "text/plain")
-		writer.Write([]byte("This is an example server.\n"))
-	})
+	r.HandleFunc("/signup",  losties_handlers.SignUp).Methods("POST")
 
 	cors := handlers.CORS(handlers.AllowedOrigins([]string{"http://localhost:3000"}), handlers.AllowCredentials())
 

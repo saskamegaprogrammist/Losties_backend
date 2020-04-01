@@ -27,7 +27,20 @@ func Init(config pgx.ConnConfig) error {
 }
 
 func (database *Database)  createTables() error {
-	_, err := database.pool.Exec(``)
+	_, err := database.pool.Exec(`
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id SERIAL NOT NULL PRIMARY KEY,
+    firstname text NOT NULL ,
+    lastname text NOT NULL,
+    email text NOT NULL UNIQUE,
+    nickname text NOT NULL UNIQUE,
+    phone text UNIQUE,
+    password text NOT NULL
+    CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')
+);
+`)
 	if err != nil {
 		return err
 	}
