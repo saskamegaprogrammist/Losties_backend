@@ -6,6 +6,7 @@ import (
 
 type Database struct {
 	pool *pgx.ConnPool
+	UsersDB *UsersDB
 }
 
 var db Database
@@ -23,6 +24,7 @@ func Init(config pgx.ConnConfig) error {
 	if err != nil {
 		return err
 	}
+	db.UsersDB = &UsersDB{}
 	return nil
 }
 
@@ -55,6 +57,10 @@ func (database *Database)  Destroy() error {
 	return nil
 }
 
-func GetPool() *pgx.ConnPool {
+func getPool() *pgx.ConnPool {
 	return db.pool
+}
+
+func GetUsersDB() *UsersDB {
+	return db.UsersDB
 }

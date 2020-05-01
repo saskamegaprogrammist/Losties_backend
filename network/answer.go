@@ -2,7 +2,7 @@ package network
 
 import (
 	json "github.com/mailru/easyjson"
-	"github.com/saskamegaprogrammist/Losties_backend/database/models"
+	models2 "github.com/saskamegaprogrammist/Losties_backend/models"
 	"github.com/saskamegaprogrammist/Losties_backend/utils"
 	"net/http"
 )
@@ -18,7 +18,7 @@ func createAnswerJson(w http.ResponseWriter, statusCode int, data []byte)  {
 	}
 }
 
-func CreateErrorAnswerJson(writer http.ResponseWriter, statusCode int, error models.RequestError) {
+func CreateErrorAnswerJson(writer http.ResponseWriter, statusCode int, error models2.RequestError) {
 	marshalledError, err := json.Marshal(error)
 	if err != nil {
 		utils.WriteError(false, "Error marhalling json", err)
@@ -26,7 +26,7 @@ func CreateErrorAnswerJson(writer http.ResponseWriter, statusCode int, error mod
 	createAnswerJson(writer, statusCode, marshalledError)
 }
 
-func CreateErrorAnswerUser(writer http.ResponseWriter, statusCode int, user models.User) {
+func CreateAnswerUserJson(writer http.ResponseWriter, statusCode int, user models2.User) {
 	marshalledUser, err := json.Marshal(user)
 	if err != nil {
 		utils.WriteError(false, "Error marhalling json", err)

@@ -17,7 +17,7 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendDatabaseModels(in *jlexer.Lexer, out *User) {
+func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(in *jlexer.Lexer, out *User) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -46,6 +46,8 @@ func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendDatabaseMo
 			out.Nickname = string(in.String())
 		case "phone":
 			out.Phone = string(in.String())
+		case "password":
+			out.Password = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -56,7 +58,7 @@ func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendDatabaseMo
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendDatabaseModels(out *jwriter.Writer, in User) {
+func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(out *jwriter.Writer, in User) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -90,29 +92,34 @@ func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendDatabaseMo
 		out.RawString(prefix)
 		out.String(string(in.Phone))
 	}
+	{
+		const prefix string = ",\"password\":"
+		out.RawString(prefix)
+		out.String(string(in.Password))
+	}
 	out.RawByte('}')
 }
 
 // MarshalJSON supports json.Marshaler interface
 func (v User) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendDatabaseModels(&w, v)
+	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v User) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendDatabaseModels(w, v)
+	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *User) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendDatabaseModels(&r, v)
+	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *User) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendDatabaseModels(l, v)
+	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(l, v)
 }
