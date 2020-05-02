@@ -44,6 +44,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/signup",  losties_handlers.GetUsersH().SignUp).Methods("POST")
 	r.HandleFunc("/login",  losties_handlers.GetUsersH().Login).Methods("POST")
+	r.HandleFunc("/user/{id}",  losties_handlers.GetUsersH().Update).Methods("PUT")
 
 
 	cors := handlers.CORS(handlers.AllowedOrigins([]string{"http://localhost:3000"}), handlers.AllowCredentials())

@@ -31,3 +31,32 @@ func (userUC *UsersUC) Login(user *models.User) (bool, error) {
 		return false, err
 	}
 }
+
+func (userUC *UsersUC) UpdateInfo(user *models.User) error {
+	return userUC.UsersDB.UpdateInfoUserById(user)
+
+}
+
+func (userUC *UsersUC) UpdateNickname(user *models.User)(bool, error) {
+	id, err := userUC.UsersDB.GetUserIdByNick(user)
+	if err != nil {
+		return false, err
+	}
+	if id != utils.ERROR_ID {
+		return true, fmt.Errorf("this nick is taken")
+	} else {
+		return false, userUC.UsersDB.UpdateUserNickById(user)
+	}
+}
+
+func (userUC *UsersUC) UpdateEmail(user *models.User) (bool, error) {
+	id, err := userUC.UsersDB.GetUserIdByEmail(user)
+	if err != nil {
+		return false, err
+	}
+	if id != utils.ERROR_ID {
+		return true, fmt.Errorf("this email is taken")
+	} else {
+		return false, userUC.UsersDB.UpdateUserEmailById(user)
+	}
+}

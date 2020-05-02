@@ -36,6 +36,8 @@ func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(in 
 			continue
 		}
 		switch key {
+		case "id":
+			out.Id = int(in.Int())
 		case "firstname":
 			out.Firstname = string(in.String())
 		case "lastname":
@@ -63,13 +65,13 @@ func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(out
 	first := true
 	_ = first
 	{
+		const prefix string = ",\"id\":"
+		out.RawString(prefix[1:])
+		out.Int(int(in.Id))
+	}
+	{
 		const prefix string = ",\"firstname\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.Firstname))
 	}
 	{

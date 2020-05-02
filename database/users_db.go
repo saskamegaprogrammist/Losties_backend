@@ -9,16 +9,131 @@ import (
 type UsersDB struct {
 }
 
+func (usersDB *UsersDB) UpdateUserNickById(user *models.User) error {
+	db := getPool()
+	transaction, err := db.Begin()
+	if err != nil {
+		utils.WriteError(false, "Failed to start transaction", err)
+		return err
+	}
+	var userPhone sql.NullString
+	rows := transaction.QueryRow("UPDATE users SET nickname=$1 WHERE id=$2 returning firstname, lastname, email, nickname, phone", user.Nickname, user.Id)
+	err = rows.Scan(&user.Firstname,&user.Lastname, &user.Email,  &user.Nickname, &userPhone)
+	if err != nil {
+		utils.WriteError(false, "Failed to scan row", err)
+		errRollback := transaction.Rollback()
+		if errRollback != nil {
+			utils.WriteError(true, "Error rollback", errRollback)
+		}
+		return err
+	}
+	user.Phone = checkNullString(userPhone)
 
-func (usersDB *UsersDB) UpdateUser(user *models.User) error {
-	//db := getPool()
-	//transaction, err := db.Begin()
-	//if err != nil {
-	//	utils.WriteError(false, "Failed to start transaction", err)
-	//	return err
-	//}
-	//
+	err = transaction.Commit()
+	if err != nil {
+		utils.WriteError(true, "Error commit", err)
+		return err
+	}
+	return nil
+}
 
+func (usersDB *UsersDB) UpdateUserEmailById(user *models.User) error {
+	db := getPool()
+	transaction, err := db.Begin()
+	if err != nil {
+		utils.WriteError(false, "Failed to start transaction", err)
+		return err
+	}
+	var userPhone sql.NullString
+	rows := transaction.QueryRow("UPDATE users SET email=$1 WHERE id=$2 returning firstname, lastname, email, nickname, phone", user.Email, user.Id)
+	err = rows.Scan(&user.Firstname,&user.Lastname, &user.Email,  &user.Nickname, &userPhone)
+	if err != nil {
+		utils.WriteError(false, "Failed to scan row", err)
+		errRollback := transaction.Rollback()
+		if errRollback != nil {
+			utils.WriteError(true, "Error rollback", errRollback)
+		}
+		return err
+	}
+	user.Phone = checkNullString(userPhone)
+
+	err = transaction.Commit()
+	if err != nil {
+		utils.WriteError(true, "Error commit", err)
+		return err
+	}
+	return nil
+}
+
+func (usersDB *UsersDB) UpdateInfoUserById(user *models.User) error {
+	db := getPool()
+	transaction, err := db.Begin()
+	if err != nil {
+		utils.WriteError(false, "Failed to start transaction", err)
+		return err
+	}
+	var userPhone sql.NullString
+	rows := transaction.QueryRow("UPDATE users SET firstname = coalesce(nullif($1, ''), firstname),  lastname = coalesce(nullif($2, ''), lastname) , phone = coalesce(nullif($3, ''), phone) WHERE id=$4 returning firstname, lastname, email, nickname, phone", user.Firstname, user.Lastname, user.Phone, user.Id)
+	err = rows.Scan(&user.Firstname,&user.Lastname, &user.Email,  &user.Nickname, &userPhone)
+	if err != nil {
+		utils.WriteError(false, "Failed to scan row", err)
+		errRollback := transaction.Rollback()
+		if errRollback != nil {
+			utils.WriteError(true, "Error rollback", errRollback)
+		}
+		return err
+	}
+	user.Phone = checkNullString(userPhone)
+
+	err = transaction.Commit()
+	if err != nil {
+		utils.WriteError(true, "Error commit", err)
+		return err
+	}
+	return nil
+
+}
+
+func (usersDB *UsersDB) GetUserIdByEmail(user *models.User) (int, error) {
+	userExistsId := utils.ERROR_ID
+	db := getPool()
+	transaction, err := db.Begin()
+	if err != nil {
+		utils.WriteError(false, "Failed to start transaction", err)
+		return userExistsId, err
+	}
+
+
+	row := transaction.QueryRow("SELECT id FROM users WHERE email = $1", user.Email)
+	row.Scan(&userExistsId)
+
+	err = transaction.Commit()
+	if err != nil {
+		utils.WriteError(true, "Error commit", err)
+		return userExistsId, err
+	}
+	return userExistsId, nil
+}
+
+func (usersDB *UsersDB) GetUserIdByNick(user *models.User) (int, error) {
+	userExistsId := utils.ERROR_ID
+	db := getPool()
+	transaction, err := db.Begin()
+	if err != nil {
+		utils.WriteError(false, "Failed to start transaction", err)
+		return userExistsId, err
+	}
+
+
+	row := transaction.QueryRow("SELECT id FROM users WHERE nick = $1", user.Nickname)
+	row.Scan(&userExistsId)
+
+	err = transaction.Commit()
+	if err != nil {
+		utils.WriteError(true, "Error commit", err)
+		return userExistsId, err
+	}
+	return userExistsId, nil
 }
 
 func (usersDB *UsersDB) GetUserIdByNickAndEmail(user *models.User) (int, error) {
@@ -44,7 +159,8 @@ func (usersDB *UsersDB) GetUserIdByNickAndEmail(user *models.User) (int, error) 
 
 func (usersDB *UsersDB) GetUserByEmailAndPassword(user *models.User) error {
 	db := getPool()
-	transaction, err := db.Begin()if err != nil {
+	transaction, err := db.Begin()
+	if err != nil {
 		utils.WriteError(false, "Failed to start transaction", err)
 		return err
 	}
@@ -61,11 +177,7 @@ func (usersDB *UsersDB) GetUserByEmailAndPassword(user *models.User) error {
 		}
 		return err
 	}
-	if userPhone.Valid {
-		user.Phone = userPhone.String
-	} else {
-		user.Phone = ""
-	}
+	user.Phone = checkNullString(userPhone)
 
 	err = transaction.Commit()
 	if err != nil {
@@ -102,4 +214,12 @@ func (usersDB *UsersDB) InsertUser(user *models.User) error {
 		return err
 	}
 	return nil
+}
+
+func checkNullString(sqlStr sql.NullString) string {
+	if sqlStr.Valid {
+		return sqlStr.String
+	} else {
+		return ""
+	}
 }
