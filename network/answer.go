@@ -8,10 +8,8 @@ import (
 )
 
 func createAnswerJson(w http.ResponseWriter, statusCode int, data []byte)  {
-
-	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(statusCode)
-
+	w.Header().Set("content-type", "application/json")
 	_, err := w.Write(data)
 	if err != nil {
 		utils.WriteError(false, "Error writing answer", err)

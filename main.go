@@ -25,13 +25,12 @@ func main() {
 		Host:     "localhost",
 		User:     "alexis",
 		Password: "sinope27",
-	},
-	)
+	}, "localhost")
 	if err != nil {
 		utils.WriteError(false, "Failed to create db", err)
 	}
 
-	err = useCases.Init(database.GetUsersDB())
+	err = useCases.Init(database.GetUsersDB(), database.GetCookiesDB())
 	if err != nil {
 		utils.WriteError(false, "Failed to create useCases", err)
 	}
@@ -42,12 +41,13 @@ func main() {
 	}
 
 	r := mux.NewRouter()
+	r.HandleFunc("/auth",  losties_handlers.GetUsersH().Auth).Methods("GET")
 	r.HandleFunc("/signup",  losties_handlers.GetUsersH().SignUp).Methods("POST")
 	r.HandleFunc("/login",  losties_handlers.GetUsersH().Login).Methods("POST")
 	r.HandleFunc("/user/{id}",  losties_handlers.GetUsersH().Update).Methods("PUT")
 
 
-	cors := handlers.CORS(handlers.AllowedOrigins([]string{"http://localhost:3000"}), handlers.AllowCredentials())
+	cors := handlers.CORS(handlers.AllowedOrigins([]string{"http://localhost:3000"}), handlers.AllowCredentials(), handlers.AllowedMethods([]string{"POST", "GET", "PUT", "DELETE"}))
 
 	server := &http.Server{
 		Addr: ":5000",

@@ -8,6 +8,7 @@ import (
 	"github.com/saskamegaprogrammist/Losties_backend/network"
 	"github.com/saskamegaprogrammist/Losties_backend/useCases"
 	"github.com/saskamegaprogrammist/Losties_backend/utils"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -16,10 +17,30 @@ type UsersHandlers struct {
 	UsersUC *useCases.UsersUC
 }
 
-
+func (uh *UsersHandlers) Auth(writer http.ResponseWriter, req *http.Request) {
+	var foundUser models.User
+	cookie, err := req.Cookie(utils.COOKIE_NAME)
+//	log.Println(cookie.Value)
+	if err != nil {
+		utils.WriteError(false, "Error finding cookie", err)
+		network.CreateErrorAnswerJson(writer, utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
+		return
+	}
+	loggedIn, err := uh.UsersUC.LogUser(cookie, &foundUser)
+	if !loggedIn {
+		network.CreateErrorAnswerJson(writer, utils.StatusCode("Unauthorized"), models.CreateError(err.Error()))
+		return
+	}
+	if err != nil {
+		logger.Error(err)
+		network.CreateErrorAnswerJson(writer, utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
+		return
+	}
+	network.CreateAnswerUserJson(writer,  utils.StatusCode("OK"), foundUser)
+}
 
 func (uh *UsersHandlers) SignUp(writer http.ResponseWriter, req *http.Request) {
-	//req.Cookie("losties_cookie")
+
 	var newUser models.User
 	err := json.UnmarshalFromReader(req.Body, &newUser)
 	if err != nil {
@@ -50,7 +71,8 @@ func (uh *UsersHandlers) Login(writer http.ResponseWriter, req *http.Request) {
 		network.CreateErrorAnswerJson(writer, utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
 		return
 	}
-	userFault, err := uh.UsersUC.Login(&newUser)
+	userFault, cookie, err := uh.UsersUC.Login(&newUser)
+	http.SetCookie(writer, cookie)
 	if userFault {
 		network.CreateErrorAnswerJson(writer,  utils.StatusCode("Bad Request"), models.CreateError(err.Error()))
 		return
@@ -60,7 +82,6 @@ func (uh *UsersHandlers) Login(writer http.ResponseWriter, req *http.Request) {
 		network.CreateErrorAnswerJson(writer,  utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
 		return
 	}
-
 	network.CreateAnswerUserJson(writer,  utils.StatusCode("OK"), newUser)
 }
 
@@ -80,6 +101,7 @@ func (uh *UsersHandlers) Update(writer http.ResponseWriter, req *http.Request) {
 		network.CreateErrorAnswerJson(writer, utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
 		return
 	}
+	log.Println(updUser)
 	if updUser.Id == 0 {
 		updUser.Id = userId
 	} else if updUser.Id != userId {
@@ -87,36 +109,15 @@ func (uh *UsersHandlers) Update(writer http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if updUser.Email != "" {
-		userFault, err := uh.UsersUC.UpdateEmail(&updUser)
-		if userFault {
-			network.CreateErrorAnswerJson(writer,  utils.StatusCode("Bad Request"), models.CreateError(err.Error()))
-			return
-		}
-		if err != nil {
-			logger.Error(err)
-			network.CreateErrorAnswerJson(writer,  utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
-			return
-		}
-	} else if updUser.Nickname != "" {
-		userFault, err := uh.UsersUC.UpdateNickname(&updUser)
-		if userFault {
-			network.CreateErrorAnswerJson(writer,  utils.StatusCode("Bad Request"), models.CreateError(err.Error()))
-			return
-		}
-		if err != nil {
-			logger.Error(err)
-			network.CreateErrorAnswerJson(writer,  utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
-			return
-		}
-
-	} else {
-		err = uh.UsersUC.UpdateInfo(&updUser)
-		if err != nil {
-			logger.Error(err)
-			network.CreateErrorAnswerJson(writer,  utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
-			return
-		}
+	userFault, err := uh.UsersUC.UpdateUser(&updUser)
+	if userFault {
+		network.CreateErrorAnswerJson(writer,  utils.StatusCode("Bad Request"), models.CreateError(err.Error()))
+		return
+	}
+	if err != nil {
+		logger.Error(err)
+		network.CreateErrorAnswerJson(writer,  utils.StatusCode("Internal Server Error"), models.CreateError(err.Error()))
+		return
 	}
 
 	network.CreateAnswerUserJson(writer,  utils.StatusCode("OK"), updUser)

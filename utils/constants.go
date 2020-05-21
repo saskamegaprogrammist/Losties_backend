@@ -1,3 +1,4 @@
 package utils
 
-const ERROR_ID  = -1
+const ERROR_ID  = 0
+const COOKIE_NAME = "losties_cookie"

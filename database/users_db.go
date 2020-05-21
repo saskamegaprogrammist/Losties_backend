@@ -125,7 +125,7 @@ func (usersDB *UsersDB) GetUserIdByNick(user *models.User) (int, error) {
 	}
 
 
-	row := transaction.QueryRow("SELECT id FROM users WHERE nick = $1", user.Nickname)
+	row := transaction.QueryRow("SELECT id FROM users WHERE nickname = $1", user.Nickname)
 	row.Scan(&userExistsId)
 
 	err = transaction.Commit()
@@ -155,6 +155,35 @@ func (usersDB *UsersDB) GetUserIdByNickAndEmail(user *models.User) (int, error) 
 		return userExistsId, err
 	}
 	return userExistsId, nil
+}
+
+func (usersDB *UsersDB) GetUserById(user *models.User) error {
+	db := getPool()
+	transaction, err := db.Begin()
+	if err != nil {
+		utils.WriteError(false, "Failed to start transaction", err)
+		return err
+	}
+
+	var userPhone sql.NullString
+	rows := transaction.QueryRow("SELECT * FROM users WHERE id = $1", user.Id)
+	err = rows.Scan(&user.Id, &user.Firstname,&user.Lastname, &user.Email, &user.Nickname, &userPhone, &user.Password)
+	if err != nil {
+		utils.WriteError(false, "Failed to scan row", err)
+		errRollback := transaction.Rollback()
+		if errRollback != nil {
+			utils.WriteError(true, "Error rollback", errRollback)
+		}
+		return err
+	}
+	user.Phone = checkNullString(userPhone)
+
+	err = transaction.Commit()
+	if err != nil {
+		utils.WriteError(true, "Error commit", err)
+		return err
+	}
+	return nil
 }
 
 func (usersDB *UsersDB) GetUserByEmailAndPassword(user *models.User) error {
@@ -196,8 +225,8 @@ func (usersDB *UsersDB) InsertUser(user *models.User) error {
 		return err
 	}
 
-	row := transaction.QueryRow("INSERT INTO users (firstname, lastname, email, nickname, password) VALUES ($1, $2, $3, $4, $5) RETURNING id",
-		user.Firstname, user.Lastname, user.Email, user.Nickname, user.Password)
+	row := transaction.QueryRow("INSERT INTO users (firstname, lastname, email, nickname, password, phone) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+		user.Firstname, user.Lastname, user.Email, user.Nickname, user.Password, user.Phone)
 	err = row.Scan(&user.Id)
 	if err != nil {
 		utils.WriteError(false, "Failed to scan row", err)

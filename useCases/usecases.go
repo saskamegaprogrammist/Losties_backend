@@ -10,8 +10,8 @@ type UseCases struct {
 
 var uc UseCases
 
-func Init(usersDB *database.UsersDB) error {
-	uc.UsersUC = &UsersUC{usersDB}
+func Init(usersDB *database.UsersDB, cookiesDB *database.CookiesDB) error {
+	uc.UsersUC = &UsersUC{usersDB, cookiesDB}
 	return nil
 }
 
