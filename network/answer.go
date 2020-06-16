@@ -31,3 +31,67 @@ func CreateAnswerUserJson(writer http.ResponseWriter, statusCode int, user model
 	}
 	createAnswerJson(writer, statusCode, marshalledUser)
 }
+
+func CreateAnswerUserPublicJson(writer http.ResponseWriter, statusCode int, user models2.UserPublic) {
+	marshalledUser, err := json.Marshal(user)
+	if err != nil {
+		utils.WriteError(false, "Error marhalling json", err)
+	}
+	createAnswerJson(writer, statusCode, marshalledUser)
+}
+
+func CreateAnswerAdJson(writer http.ResponseWriter, statusCode int, ad models2.Ad) {
+	marshalledAd, err := json.Marshal(ad)
+	if err != nil {
+		utils.WriteError(false, "Error marhalling json", err)
+	}
+	createAnswerJson(writer, statusCode, marshalledAd)
+}
+
+func CreateAnswerPetJson(writer http.ResponseWriter, statusCode int, ad models2.Pet) {
+	marshalledPet, err := json.Marshal(ad)
+	if err != nil {
+		utils.WriteError(false, "Error marhalling json", err)
+	}
+	createAnswerJson(writer, statusCode, marshalledPet)
+}
+
+func CreateAnswerCoordsJson(writer http.ResponseWriter, statusCode int, ad models2.Coords) {
+	marshalledC, err := json.Marshal(ad)
+	if err != nil {
+		utils.WriteError(false, "Error marhalling json", err)
+	}
+	createAnswerJson(writer, statusCode, marshalledC)
+}
+
+func CreateAnswerCommentJson(writer http.ResponseWriter, statusCode int, comment models2.Comment) {
+	marshalledC, err := json.Marshal(comment)
+	if err != nil {
+		utils.WriteError(false, "Error marhalling json", err)
+	}
+	createAnswerJson(writer, statusCode, marshalledC)
+}
+
+func CreateAnswerCommentsJson(writer http.ResponseWriter, statusCode int, comments models2.Comments) {
+	marshalledC, err := json.Marshal(comments)
+	if err != nil {
+		utils.WriteError(false, "Error marhalling json", err)
+	}
+	createAnswerJson(writer, statusCode, marshalledC)
+}
+
+func CreateAnswerCoordsAllJson(writer http.ResponseWriter, statusCode int, coordsAll models2.CoordsAll) {
+	marshalledCA, err := json.Marshal(coordsAll)
+	if err != nil {
+		utils.WriteError(false, "Error marhalling json", err)
+	}
+	createAnswerJson(writer, statusCode, marshalledCA)
+}
+
+func CreateAnswerAdsJson(writer http.ResponseWriter, statusCode int, ads models2.Ads) {
+	marshalledAd, err := json.Marshal(ads)
+	if err != nil {
+		utils.WriteError(false, "Error marhalling json", err)
+	}
+	createAnswerJson(writer, statusCode, marshalledAd)
+}

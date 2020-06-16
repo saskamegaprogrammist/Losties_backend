@@ -16,6 +16,13 @@ func (cookiesDB *CookiesDB) InsertCookie (cookie *models.CookieInfo) error {
 	return err
 }
 
+func (cookiesDB *CookiesDB) DeleteCookie (cookie string) error {
+	cookiesCollection := getMongo().Collection("cookies")
+	filter := bson.D{{"cookie", cookie}}
+	_, err := cookiesCollection.DeleteOne(context.TODO(), filter)
+	return err
+}
+
 func (cookiesDB *CookiesDB) GetCookieByUserId (userId string) (models.CookieInfo, error) {
 	cookiesCollection := getMongo().Collection("cookies")
 	var result models.CookieInfo

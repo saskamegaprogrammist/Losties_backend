@@ -4,6 +4,6 @@ type RequestError struct {
 	Message string `json:"message"`
 }
 
-func CreateError(message string) RequestError {
+func CreateMessage(message string) RequestError {
 	return RequestError{Message:message}
 }

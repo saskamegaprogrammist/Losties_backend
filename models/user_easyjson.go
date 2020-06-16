@@ -17,7 +17,101 @@ var (
 	_ easyjson.Marshaler
 )
 
-func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(in *jlexer.Lexer, out *User) {
+func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(in *jlexer.Lexer, out *UserPublic) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeString()
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "id":
+			out.Id = int(in.Int())
+		case "firstname":
+			out.Firstname = string(in.String())
+		case "lastname":
+			out.Lastname = string(in.String())
+		case "email":
+			out.Email = string(in.String())
+		case "nickname":
+			out.Nickname = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(out *jwriter.Writer, in UserPublic) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"id\":"
+		out.RawString(prefix[1:])
+		out.Int(int(in.Id))
+	}
+	{
+		const prefix string = ",\"firstname\":"
+		out.RawString(prefix)
+		out.String(string(in.Firstname))
+	}
+	{
+		const prefix string = ",\"lastname\":"
+		out.RawString(prefix)
+		out.String(string(in.Lastname))
+	}
+	{
+		const prefix string = ",\"email\":"
+		out.RawString(prefix)
+		out.String(string(in.Email))
+	}
+	{
+		const prefix string = ",\"nickname\":"
+		out.RawString(prefix)
+		out.String(string(in.Nickname))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v UserPublic) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v UserPublic) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *UserPublic) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *UserPublic) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(l, v)
+}
+func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels1(in *jlexer.Lexer, out *User) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -60,7 +154,7 @@ func easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(in 
 		in.Consumed()
 	}
 }
-func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(out *jwriter.Writer, in User) {
+func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels1(out *jwriter.Writer, in User) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -105,23 +199,23 @@ func easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(out
 // MarshalJSON supports json.Marshaler interface
 func (v User) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(&w, v)
+	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels1(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v User) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels(w, v)
+	easyjson9e1087fdEncodeGithubComSaskamegaprogrammistLostiesBackendModels1(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *User) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(&r, v)
+	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels1(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *User) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels(l, v)
+	easyjson9e1087fdDecodeGithubComSaskamegaprogrammistLostiesBackendModels1(l, v)
 }

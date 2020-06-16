@@ -186,6 +186,33 @@ func (usersDB *UsersDB) GetUserById(user *models.User) error {
 	return nil
 }
 
+func (usersDB *UsersDB) GetUserPublicById(user *models.UserPublic) error {
+	db := getPool()
+	transaction, err := db.Begin()
+	if err != nil {
+		utils.WriteError(false, "Failed to start transaction", err)
+		return err
+	}
+
+	rows := transaction.QueryRow("SELECT id, firstname, lastname, email, nickname FROM users WHERE id = $1", user.Id)
+	err = rows.Scan(&user.Id, &user.Firstname,&user.Lastname, &user.Email, &user.Nickname)
+	if err != nil {
+		utils.WriteError(false, "Failed to scan row", err)
+		errRollback := transaction.Rollback()
+		if errRollback != nil {
+			utils.WriteError(true, "Error rollback", errRollback)
+		}
+		return err
+	}
+
+	err = transaction.Commit()
+	if err != nil {
+		utils.WriteError(true, "Error commit", err)
+		return err
+	}
+	return nil
+}
+
 func (usersDB *UsersDB) GetUserByEmailAndPassword(user *models.User) error {
 	db := getPool()
 	transaction, err := db.Begin()

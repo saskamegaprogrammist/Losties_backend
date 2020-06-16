@@ -55,6 +55,24 @@ func (userUC *UsersUC) LogUser(cookie *http.Cookie, user *models.User) (bool, er
 	return true, err
 }
 
+func (userUC *UsersUC) CheckUser(cookie *http.Cookie, userId int) (bool, error) {
+	cookieInfo, err := userUC.CookiesDB.GetUserIdByCookie(cookie.Value)
+	if cookieInfo.User == utils.ERROR_ID {
+		return false, fmt.Errorf("not logged in")
+	}
+	if cookieInfo.User != userId {
+		return false, err
+	}
+	if err != nil {
+		return true, err
+	}
+	return true, nil
+}
+
+func (userUC *UsersUC) DeleteCookie(cookie string) error {
+	return userUC.CookiesDB.DeleteCookie(cookie)
+}
+
 func (userUC *UsersUC) SetCookie(user *models.User) (http.Cookie, error) {
 	token := uuid.New()
 	sessionExpiration := time.Now().Add(365 * 24 * time.Hour)
@@ -108,5 +126,17 @@ func (userUC *UsersUC) UpdateEmail(user *models.User) (bool, error) {
 		return true, fmt.Errorf("this email is taken")
 	} else {
 		return false, userUC.UsersDB.UpdateUserEmailById(user)
+	}
+}
+
+func (userUC *UsersUC) GetUser(newUser *models.UserPublic) (bool, error) {
+	err := userUC.UsersDB.GetUserPublicById(newUser)
+	if err != nil {
+		return false, err
+	}
+	if newUser.Id == utils.ERROR_ID {
+		return false, fmt.Errorf("user doesn't exist")
+	} else {
+		return false, nil
 	}
 }
