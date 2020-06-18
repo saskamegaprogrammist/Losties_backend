@@ -62,7 +62,7 @@
 # Ad
 ## Ad ad to user
 
-"/user/{id}/ad" **POST**
+"/user/{id}/card" **POST**
 
 ### Answers
 
@@ -73,7 +73,7 @@
 
 ## Get user ads
 
-"/user/{id}/ads" **GET**
+"/user/{id}/cards" **GET**
 
 ### Query params
 
@@ -88,7 +88,7 @@
 
 ## Get user ads number
 
-"/user/{id}/ads/number" **GET**
+"/user/{id}/cards/number" **GET**
 
 ### Query params
 
@@ -102,7 +102,7 @@
 
 ## Get all ads
 
-"/ads" **GET**
+"/cards" **GET**
 
 ### Query params
 
@@ -118,7 +118,7 @@
 
 ## Get ad
 
-"/ad/{id}" **GET**
+"/card/{id}" **GET**
 
 ### Answers
 
@@ -129,7 +129,7 @@
 # Pet
 ## Ad pet to ad
 
-"/ad/{id}/pet" **POST**
+"/card/{id}/pet" **POST**
 
 ### Answers
 
@@ -139,7 +139,7 @@
 
 ## Get ads pet
 
-"/ad/{id}/pet" **GET**
+"/card/{id}/pet" **GET**
 
 
 ### Answers
@@ -152,7 +152,7 @@
 
 ## Ad ads picture
 
-"/ad/{id}/pic" **POST**
+"/card/{id}/pic" **POST**
 
 ### Answers
 
@@ -162,7 +162,7 @@
 
 ## Get ads picture
 
-"/ad/{id}/pic" **GET**
+"/card/{id}/pic" **GET**
 
 
 ### Answers
@@ -198,7 +198,7 @@
 
 ## Ad ads coords
 
-"/ad/{id}/coords" **POST**
+"/card/{id}/coords" **POST**
 
 ### Answers
 
@@ -208,7 +208,7 @@
 
 ## Get ads coords
 
-"/ad/{id}/coords" **GET**
+"/card/{id}/coords" **GET**
 
 
 ### Answers
@@ -231,7 +231,7 @@
 
 ## Ad comment to ad
 
-"/ad/{id}/comment" **POST**
+"/card/{id}/comment" **POST**
 
 ### Answers
 
@@ -241,7 +241,7 @@
 
 ## Get ads comments
 
-"/ad/{id}/coomments" **GET**
+"/card/{id}/coomments" **GET**
 
 
 ### Answers

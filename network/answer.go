@@ -9,6 +9,8 @@ import (
 
 func createAnswerJson(w http.ResponseWriter, statusCode int, data []byte)  {
 	w.WriteHeader(statusCode)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("content-type", "application/json")
 	_, err := w.Write(data)
 	if err != nil {

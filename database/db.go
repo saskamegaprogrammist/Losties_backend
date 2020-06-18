@@ -90,6 +90,10 @@ CREATE TABLE users (
     CONSTRAINT valid_email CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')
 );
 
+CREATE INDEX users_nickname ON users (nickname);
+CREATE INDEX users_email ON users (email);
+CREATE INDEX users_email_password ON users (email, password);
+
 
 CREATE TABLE ads (
     id SERIAL NOT NULL PRIMARY KEY,
@@ -103,6 +107,11 @@ CREATE TABLE ads (
     date TIMESTAMPTZ NOT NULL
 );
 
+CREATE INDEX ads_userid ON ads (userid);
+CREATE INDEX ads_type ON ads (type);
+CREATE INDEX ads_userid_type ON ads (userid, type);
+
+
 CREATE TABLE pets (
     id SERIAL NOT NULL PRIMARY KEY,
     adid int NOT NULL REFERENCES ads(id) ON DELETE CASCADE,
@@ -112,12 +121,18 @@ CREATE TABLE pets (
     color text DEFAULT ''
 );
 
+CREATE INDEX pets_adid ON pets (adid);
+
+
 CREATE TABLE coords (
     id SERIAL NOT NULL PRIMARY KEY,
     adid int NOT NULL REFERENCES ads(id) ON DELETE CASCADE,
     x double precision NOT NULL ,
     y double precision NOT NULL 
 );
+
+CREATE INDEX coords_adid ON coords (adid);
+
 
 CREATE TABLE comments (
     id SERIAL NOT NULL PRIMARY KEY,
@@ -126,6 +141,8 @@ CREATE TABLE comments (
     text text NOT NULL ,
 	date TIMESTAMPTZ NOT NULL
 );
+
+CREATE INDEX comments_adid ON coords (adid);
 
 
 CREATE OR REPLACE FUNCTION ad_comment() RETURNS TRIGGER
@@ -146,18 +163,20 @@ CREATE TRIGGER AdComment
 
 CREATE OR REPLACE FUNCTION delete_comment() RETURNS TRIGGER
 LANGUAGE  plpgsql
-AS $ad_comment$
+AS $delete_comment$
 BEGIN
    UPDATE ads SET comments = comments - 1 WHERE id = OLD.adid;
     RETURN NEW;
 END
-$ad_comment$;
+$delete_comment$;
 
 
 CREATE TRIGGER DeleteComment
     AFTER DELETE on comments
     FOR EACH ROW
     EXECUTE PROCEDURE delete_comment();
+
+
 
 `)
 	if err != nil {

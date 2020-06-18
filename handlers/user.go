@@ -21,7 +21,6 @@ type UsersHandlers struct {
 func (uh *UsersHandlers) Auth(writer http.ResponseWriter, req *http.Request) {
 	var foundUser models.User
 	cookie, err := req.Cookie(utils.COOKIE_NAME)
-//	log.Println(cookie.Value)
 	if err != nil {
 		utils.WriteError(false, "Error finding cookie", err)
 		network.CreateErrorAnswerJson(writer, utils.StatusCode("Internal Server Error"), models.CreateMessage(err.Error()))

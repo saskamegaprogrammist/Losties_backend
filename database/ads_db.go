@@ -5,6 +5,7 @@ import (
 	"github.com/jackc/pgx"
 	"github.com/saskamegaprogrammist/Losties_backend/models"
 	"github.com/saskamegaprogrammist/Losties_backend/utils"
+	"strings"
 )
 
 type AdsDB struct {
@@ -208,9 +209,9 @@ func (adsDB *AdsDB) SearchAds(search string) ([]models.Ad, error) {
 		utils.WriteError(false, "Failed to start transaction", err)
 		return ads, err
 	}
-	queryString := "SELECT * FROM ads WHERE text LIKE '%%' || $1 || '%%' OR title LIKE '%%' || $1 || '%%' OR contacts LIKE '%%' || $1 || '%%' OR time LIKE '%%' || $1 || '%%' UNION SELECT * FROM ADS WHERE id IN (SELECT pets.adid FROM pets WHERE pets.name LIKE '%%' || $1 || '%%' OR pets.animal LIKE '%%' || $1 || '%%' OR pets.breed LIKE '%%' || $1 || '%%' OR pets.color LIKE '%%' || $1 || '%%');"
+	queryString := "SELECT * FROM ads WHERE lower(text) LIKE '%%' || $1 || '%%' OR lower(title) LIKE '%%' || $1 || '%%' OR lower(contacts) LIKE '%%' || $1 || '%%' OR lower(time) LIKE '%%' || $1 || '%%' UNION SELECT * FROM ADS WHERE id IN (SELECT pets.adid FROM pets WHERE lower(pets.name) LIKE '%%' || $1 || '%%' OR lower(pets.animal) LIKE '%%' || $1 || '%%' OR lower(pets.breed) LIKE '%%' || $1 || '%%' OR lower(pets.color) LIKE '%%' || $1 || '%%');"
 
-	rows, err := transaction.Query(queryString, search)
+	rows, err := transaction.Query(queryString, strings.ToLower(search))
 	if err != nil {
 		utils.WriteError(false, "Wrong ad type", err)
 		errRollback := transaction.Rollback()
