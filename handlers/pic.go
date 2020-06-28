@@ -161,19 +161,8 @@ func (ph *PicHandlers) UserPicGet(writer http.ResponseWriter, req *http.Request)
 		return
 	}
 
-	cookie, err := req.Cookie(utils.COOKIE_NAME)
 	if err != nil {
 		utils.WriteError(false, "Error finding cookie", err)
-		network.CreateErrorAnswerJson(writer, utils.StatusCode("Internal Server Error"), models.CreateMessage(err.Error()))
-		return
-	}
-	authorized, err := ph.UsersUC.CheckUser(cookie, user.Id)
-	if !authorized {
-		network.CreateErrorAnswerJson(writer, utils.StatusCode("Unauthorized"), models.CreateMessage(err.Error()))
-		return
-	}
-	if err != nil {
-		logger.Error(err)
 		network.CreateErrorAnswerJson(writer, utils.StatusCode("Internal Server Error"), models.CreateMessage(err.Error()))
 		return
 	}

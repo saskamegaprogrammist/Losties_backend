@@ -6,6 +6,7 @@ import (
 	"github.com/saskamegaprogrammist/Losties_backend/models"
 	"github.com/saskamegaprogrammist/Losties_backend/utils"
 	"io/ioutil"
+	"log"
 	"mime"
 	"mime/multipart"
 	"net/http"
@@ -152,6 +153,7 @@ func (picUC *PicUC) GetUserPic (user *models.User) (bool, *os.File, error) {
 	} else {
 		filenameString = filenameUser.Filename
 	}
+	log.Println(filenameString)
 	file, err := os.Open(filenameString)
 	if err != nil {
 		return false, nil, err

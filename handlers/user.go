@@ -91,7 +91,6 @@ func (uh *UsersHandlers) Login(writer http.ResponseWriter, req *http.Request) {
 		return
 	}
 	userFault, cookie, err := uh.UsersUC.Login(&newUser)
-	http.SetCookie(writer, cookie)
 	if userFault {
 		network.CreateErrorAnswerJson(writer,  utils.StatusCode("Bad Request"), models.CreateMessage(err.Error()))
 		return
@@ -101,6 +100,7 @@ func (uh *UsersHandlers) Login(writer http.ResponseWriter, req *http.Request) {
 		network.CreateErrorAnswerJson(writer,  utils.StatusCode("Internal Server Error"), models.CreateMessage(err.Error()))
 		return
 	}
+	http.SetCookie(writer, cookie)
 	network.CreateAnswerUserJson(writer,  utils.StatusCode("OK"), newUser)
 }
 
